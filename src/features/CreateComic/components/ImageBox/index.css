@@ -1,0 +1,30 @@
+.image-box{
+    border-radius: 0.5rem;
+    background-color: white;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.image-box-text, .image-box-text:hover, .image-box-text:focus-within{
+    border-width: 0 !important;
+    box-shadow: none;
+}
+
+.image-box-text-group{
+    border-width: 1.5px 0 0 0 !important;
+    border-color: #E0000000;
+    border-style: solid;
+    border-color: grey;
+    border-radius: 0 0 0.5rem 0.5rem !important;
+    display: flex;
+    margin-top: auto;
+}
+
+.image-box-text-group:focus-within, .image-box-text-group:hover {
+    border-color: orange;
+}
+
+.image-box-search{
+    font-size: 1.5rem;
+}
+

@@ -1,10 +1,10 @@
-import logo from "app/assets/logo.svg";
-import "app/index.css";
 import { useEffect } from "react";
-import { fetchComicFromText } from "./api/HuggingFace/comics";
+import { fetchComicFromText } from "app/api/HuggingFace/comics";
+import { SettingFilled } from "@ant-design/icons";
+import CreateComic from "features/CreateComic";
+import "app/index.css";
 
 const App: React.FC = () => {
-  console.log("process env", process.env);
   useEffect(() => {
     const fetchApis = async () => {
       const url = await fetchComicFromText("Astronaut riding a horse");
@@ -14,7 +14,15 @@ const App: React.FC = () => {
     fetchApis();
   }, []);
 
-  return <div className="App"></div>;
+  return (
+    <div className="home-container">
+      <div className="app-bar">
+        <p className="app-bar-title">Comicify</p>
+        <SettingFilled />
+      </div>
+      <CreateComic className="home-content-wrapper" />
+    </div>
+  );
 };
 
 export default App;

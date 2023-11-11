@@ -1,0 +1,50 @@
+.home-content-container {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+
+.home-content {
+    overflow: auto;
+    padding: 1rem 1.5rem;
+    flex: 1;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1rem;
+    /* background-color: #dbdbdb; */
+    background-color: orange;
+}
+
+.home-content-row{
+    flex: 1;
+}
+
+.ant-col:first-child {
+    padding-left: 0 !important;
+}
+
+.ant-col:last-child {
+    padding-right: 0 !important;
+}
+
+.home-content::-webkit-scrollbar {
+    display: none;
+}
+
+.home-drawer {
+    background-color: #f4f44a;
+    width: 20%;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.home-drawer::-webkit-scrollbar {
+    display: none;
+}
+
+.home-image-box{
+    height: 100%;
+}
