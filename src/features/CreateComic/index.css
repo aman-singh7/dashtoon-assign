@@ -2,6 +2,12 @@
     display: flex;
     flex-flow: row nowrap;
     align-items: stretch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.home-content-container::-webkit-scrollbar {
+    display: none;
 }
 
 .home-content {
@@ -45,6 +51,16 @@
     align-items: stretch;
 }
 
+.divider{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: large;
+}
+
 .home-drawer .avatar{
     margin: 5rem auto;
     aspect-ratio: 1;
@@ -64,6 +80,7 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .home-drawer .menu.active{

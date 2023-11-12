@@ -2,6 +2,12 @@
     display: flex;
     flex-flow: column nowrap;
     height: 100vh;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.home-container::-webkit-scrollbar {
+    display: none;
 }
 
 .app-bar{

@@ -1,14 +1,7 @@
 import { useState } from "react";
 import "./index.css";
 import Draggable from "react-draggable";
-import {
-  DeleteTwoTone,
-  LockOutlined,
-  LockTwoTone,
-  UnlockOutlined,
-  UnlockTwoTone,
-} from "@ant-design/icons";
-import TextArea from "antd/es/input/TextArea";
+import { DeleteTwoTone, LockTwoTone, UnlockTwoTone } from "@ant-design/icons";
 
 export type SpeechBubbleDirection = "left" | "right";
 
