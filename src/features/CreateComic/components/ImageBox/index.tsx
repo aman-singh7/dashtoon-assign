@@ -7,20 +7,27 @@ import {
   DeleteOutlined,
   CloudDownloadOutlined,
   MessageOutlined,
+  RightOutlined,
+  LeftOutlined,
 } from "@ant-design/icons";
 
 import { Spin, Dropdown, message, Button } from "antd";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { fetchComicFromText } from "app/api/HuggingFace/comics";
 import type { MenuProps } from "antd";
 import { Link } from "react-router-dom";
+import { SpeechBubbleDirection } from "../SpeechBubble";
 
 export interface ImageBoxProps {
   className: string;
+  addSpeechBubble: (
+    direction: SpeechBubbleDirection,
+    positon?: { clientX: number; clientY: number }
+  ) => void;
 }
 
 const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
-  const { className } = props;
+  const { className, addSpeechBubble } = props;
   const [image, setImage] = useState<string>();
   const [imageLoading, setImageLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -32,7 +39,6 @@ const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
 
   const onPromptSubmit = async (event: React.MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
-    messageApi.info("loading message");
     setImageLoading(true);
     try {
       const imageURL = await fetchComicFromText(prompt);
@@ -52,6 +58,32 @@ const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
       key: "1",
       label: <span>Add Dialogue</span>,
       icon: <MessageOutlined />,
+      children: [
+        {
+          key: "1-1",
+          label: <span>Left facing</span>,
+          icon: <LeftOutlined />,
+          onClick: (event) => {
+            const mouseEvent = event.domEvent as React.MouseEvent;
+            addSpeechBubble("left", {
+              clientX: mouseEvent.clientX,
+              clientY: mouseEvent.clientY,
+            });
+          },
+        },
+        {
+          key: "1-2",
+          label: <span>Right facing</span>,
+          icon: <RightOutlined />,
+          onClick: (event) => {
+            const mouseEvent = event.domEvent as React.MouseEvent;
+            addSpeechBubble("right", {
+              clientX: mouseEvent.clientX,
+              clientY: mouseEvent.clientY,
+            });
+          },
+        },
+      ],
     },
     {
       key: "2",
@@ -76,7 +108,7 @@ const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
   ];
 
   return (
-    <Dropdown menu={{ items }} trigger={["contextMenu"]}>
+    <Dropdown menu={{ items }} trigger={["contextMenu", "click"]}>
       <div className={`image-box ${className}`}>
         {contextHolder}
         {!imageLoading && image ? (

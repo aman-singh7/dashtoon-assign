@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./index.css";
 import Draggable from "react-draggable";
 import {
+  DeleteTwoTone,
   LockOutlined,
   LockTwoTone,
   UnlockOutlined,
@@ -9,16 +10,19 @@ import {
 } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 
-type SpeechBubbleDirection = "left" | "right";
+export type SpeechBubbleDirection = "left" | "right";
 
 export interface SpeechBubbleProps {
   direction: SpeechBubbleDirection;
+  deleteSpeech: VoidFunction;
+  position?: { clientX: number; clientY: number };
+  id: number;
 }
 
 const SpeechBubble: React.FC<SpeechBubbleProps> = (
   props: SpeechBubbleProps
 ) => {
-  const { direction } = props;
+  const { direction, id, deleteSpeech, position } = props;
   const [locked, setLocked] = useState(false);
 
   const lockClickHanlder = () => {
@@ -26,7 +30,14 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = (
   };
 
   return (
-    <Draggable bounds="parent" disabled={locked}>
+    <Draggable
+      defaultPosition={
+        position ? { x: position.clientX, y: position.clientY } : undefined
+      }
+      bounds="parent"
+      disabled={locked}
+      key={id}
+    >
       <div
         className={`speech-bubble bubble ${direction}`}
         style={{ cursor: !locked ? "grab" : "auto" }}
@@ -37,11 +48,19 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = (
           contentEditable={!locked}
         />
         <div
-          className="speech-bubble-lock"
-          onClick={lockClickHanlder}
-          style={{ display: locked ? "none" : "block" }}
+          className="speech-bubble-icons"
+          style={{ display: locked ? "none" : "flex" }}
         >
-          {!locked ? <UnlockTwoTone /> : <LockTwoTone />}
+          <>
+            <div className="icon" onClick={lockClickHanlder}>
+              {!locked ? <UnlockTwoTone /> : <LockTwoTone />}
+            </div>
+            <DeleteTwoTone
+              className="icon"
+              twoToneColor="red"
+              onClick={deleteSpeech}
+            />
+          </>
         </div>
       </div>
     </Draggable>
