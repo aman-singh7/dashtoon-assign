@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Col, Row } from "antd";
+import { Avatar, Col, Row } from "antd";
 import "features/CreateComic/index.css";
 import ImageBox from "features/CreateComic/components/ImageBox";
 import SpeechBubble, {
   SpeechBubbleDirection,
   SpeechBubbleProps,
 } from "./components/SpeechBubble";
+import { LockFilled, UserOutlined } from "@ant-design/icons";
 
 export interface CreateCompicProps {
   className: string;
@@ -16,6 +17,7 @@ const CreateComic: React.FC<CreateCompicProps> = (props: CreateCompicProps) => {
   const colCounts = [3, 4, 3];
   let [speechList, setSpeechList] = useState<React.ReactElement[]>([]);
   const [availableSpeechId, setAvailableSpeechId] = useState(0);
+  const [activeMenuIndex, setActiveMenuIndex] = useState(0);
 
   const deleteSpeech = (speechId: number) => {
     setSpeechList((speechList) =>
@@ -29,8 +31,8 @@ const CreateComic: React.FC<CreateCompicProps> = (props: CreateCompicProps) => {
     direction: SpeechBubbleDirection,
     positon?: { clientX: number; clientY: number }
   ) => {
-    setSpeechList((speechList) => {
-      const newList = [
+    setAvailableSpeechId((availableSpeechId) => {
+      setSpeechList((speechList) => [
         ...speechList,
         <SpeechBubble
           id={availableSpeechId}
@@ -38,15 +40,39 @@ const CreateComic: React.FC<CreateCompicProps> = (props: CreateCompicProps) => {
           position={positon}
           deleteSpeech={() => deleteSpeech(availableSpeechId)}
         />,
-      ];
-      setAvailableSpeechId((availableSpeechId) => availableSpeechId + 1);
-      return newList;
+      ]);
+      return availableSpeechId + 1;
     });
   };
 
+  type Menu = {
+    title: string;
+    icon: any;
+  };
+
+  const menuList: Menu[] = [
+    {
+      title: "My comics",
+      icon: <LockFilled className="menu-icon" />,
+    },
+  ];
+
   return (
     <div className={`home-content-container ${className}`}>
-      <div className="home-drawer"></div>
+      <div className="home-drawer">
+        <Avatar
+          className="avatar"
+          style={{ backgroundColor: "#87d068" }}
+          icon={<UserOutlined />}
+          size={"large"}
+        />
+        {menuList.map((menu: Menu, index) => (
+          <div className={`menu ${index === activeMenuIndex ? "active" : ""}`}>
+            {menu.icon}
+            <div className="meny-title">{menu.title}</div>
+          </div>
+        ))}
+      </div>
       <div className="home-content">
         {speechList}
         {colCounts.map((count: number, rowIndex: number) => (

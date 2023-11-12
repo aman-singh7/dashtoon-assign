@@ -40,6 +40,34 @@
     overflow: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+}
+
+.home-drawer .avatar{
+    margin: 5rem auto;
+    aspect-ratio: 1;
+    width: 30%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home-drawer .menu {
+    border-radius: 0.5rem;
+    padding: 1rem 2rem;
+    margin: 0 0.5rem;
+    align-items: stretch;
+    font-size: large;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+
+.home-drawer .menu.active{
+    background-color: white;
 }
 
 .home-drawer::-webkit-scrollbar {

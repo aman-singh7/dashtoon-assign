@@ -11,8 +11,8 @@ import {
   LeftOutlined,
 } from "@ant-design/icons";
 
-import { Spin, Dropdown, message, Button } from "antd";
-import { lazy, useState } from "react";
+import { Spin, Dropdown, message } from "antd";
+import { useState } from "react";
 import { fetchComicFromText } from "app/api/HuggingFace/comics";
 import type { MenuProps } from "antd";
 import { Link } from "react-router-dom";
@@ -38,19 +38,21 @@ const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
   };
 
   const onPromptSubmit = async (event: React.MouseEvent<HTMLSpanElement>) => {
-    event.preventDefault();
-    setImageLoading(true);
-    try {
-      const imageURL = await fetchComicFromText(prompt);
-      setImage(imageURL);
-    } catch (error) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      } else {
-        message.error(String(error));
+    if (!imageLoading) {
+      event.preventDefault();
+      setImageLoading(true);
+      try {
+        const imageURL = await fetchComicFromText(prompt);
+        setImage(imageURL);
+      } catch (error) {
+        if (error instanceof Error) {
+          messageApi.error(error.message);
+        } else {
+          messageApi.error(String(error));
+        }
       }
+      setImageLoading(false);
     }
-    setImageLoading(false);
   };
 
   const items: MenuProps["items"] = [
@@ -108,7 +110,11 @@ const ImageBox: React.FC<ImageBoxProps> = (props: ImageBoxProps) => {
   ];
 
   return (
-    <Dropdown menu={{ items }} trigger={["contextMenu", "click"]}>
+    <Dropdown
+      disabled={imageLoading || image === undefined || image === ""}
+      menu={{ items }}
+      trigger={["contextMenu", "click"]}
+    >
       <div className={`image-box ${className}`}>
         {contextHolder}
         {!imageLoading && image ? (
