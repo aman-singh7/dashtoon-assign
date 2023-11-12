@@ -7,6 +7,8 @@ import axios, {
   ResponseType,
 } from "axios";
 
+import Queue from "utils/DataStructures/Queue";
+
 export type AxiosApiConfig = {
   baseURL: string;
   token?: string;
@@ -14,18 +16,97 @@ export type AxiosApiConfig = {
 
 export type AxiosApiHeaders = RawAxiosRequestHeaders | undefined;
 
+type ApiMethod = "GET" | "POST";
+
+type ApiRequest = {
+  method: ApiMethod;
+  path: string;
+  data?: Object;
+  config: AxiosRequestConfig;
+  successResolver: (response: AxiosResponse) => void;
+  errorResolver: (error: any) => void;
+};
+
+const RATE_LIMIT = 2;
+
 class AxiosApi {
   axiosInstance: AxiosInstance;
+  private pendingRequestQueue: Queue<ApiRequest>;
+  private outstandingRequestCounter: number;
   token?: string;
 
   constructor(config: AxiosApiConfig) {
     const { baseURL, token } = config;
     this.token = token;
+    this.pendingRequestQueue = new Queue<ApiRequest>();
+    this.outstandingRequestCounter = 0;
     this.axiosInstance = axios.create({
       baseURL: baseURL,
     });
   }
 
+  private processRequest = async (request: ApiRequest) => {
+    // process request again after 1 min if any present
+    setTimeout(() => {
+      const apiRequest: ApiRequest | undefined =
+        this.pendingRequestQueue.deueue();
+      if (apiRequest) {
+        this.processRequest(request);
+      } else {
+        // no request in the pendingQueue, so make room for upcoming requests
+        this.outstandingRequestCounter--;
+      }
+    }, 1000);
+
+    let response: AxiosResponse;
+    try {
+      switch (request.method) {
+        case "GET":
+          response = await this.axiosInstance.get(request.path, request.config);
+          break;
+        case "POST":
+          response = await this.axiosInstance.post(
+            request.path,
+            request.data,
+            request.config
+          );
+          break;
+      }
+      request.successResolver(response);
+    } catch (error: any) {
+      request.errorResolver(error);
+    }
+  };
+
+  private enqueueRequest = (
+    method: ApiMethod,
+    path: string,
+    config: AxiosRequestConfig,
+    data?: Object
+  ) => {
+    const responsePromise: Promise<AxiosResponse> = new Promise(
+      (resolve, reject) => {
+        const apiRequest: ApiRequest = {
+          method,
+          path,
+          config,
+          data,
+          successResolver: resolve,
+          errorResolver: reject,
+        };
+        if (this.outstandingRequestCounter < RATE_LIMIT) {
+          this.outstandingRequestCounter++;
+          this.processRequest(apiRequest);
+        } else {
+          // these requests will be initiated by the processes which are already initiated
+          this.pendingRequestQueue.enqueue(apiRequest);
+        }
+      }
+    );
+    return responsePromise;
+  };
+
+  // throw appropriate error message from the error object
   handleError = (error: any) => {
     let checkAxiosError = (error: any): error is AxiosError =>
       error instanceof AxiosError;
@@ -33,13 +114,23 @@ class AxiosApi {
     let checkPlatformError = (error: any): error is Error =>
       error instanceof Error;
 
+    let errorMessage = "Unexpected Error Ocuured";
     if (checkAxiosError(error)) {
-      console.error(error.response?.data);
+      if (error.response?.data) {
+        errorMessage = error.response?.data as string;
+      }
     } else if (checkPlatformError(error)) {
-      console.error(error.message);
+      if (error.message) {
+        errorMessage = error.message;
+      }
     } else {
-      console.error(error);
+      if (error) {
+        errorMessage = error;
+      }
     }
+
+    console.error(error);
+    throw Error(errorMessage);
   };
 
   parseResponse = (response: AxiosResponse) => {
@@ -88,7 +179,8 @@ class AxiosApi {
         headers: headers,
       };
 
-      const response: AxiosResponse = await this.axiosInstance.get(
+      const response: AxiosResponse = await this.enqueueRequest(
+        "GET",
         path,
         config
       );
@@ -118,10 +210,11 @@ class AxiosApi {
         responseType: responseType,
         headers: headers,
       };
-      const response: AxiosResponse = await this.axiosInstance.post(
+      const response: AxiosResponse = await this.enqueueRequest(
+        "POST",
         path,
-        data,
-        config
+        config,
+        data
       );
       return this.parseResponse(response);
     } catch (error: any) {

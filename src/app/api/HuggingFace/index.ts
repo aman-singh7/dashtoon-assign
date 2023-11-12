@@ -8,7 +8,11 @@ const apiConfig: AxiosApiConfig = {
 console.log("api config", apiConfig);
 
 /**
- * Create Instance for this Api and if needed override errorHandler
+ * Create Instance for this Api and if needed override public methods
+ * like handleError, handleResponse
+ *
+ *
  */
 const huggingfaceApi = new AxiosApi(apiConfig);
+
 export default huggingfaceApi;
