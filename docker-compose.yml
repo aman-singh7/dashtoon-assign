@@ -1,0 +1,9 @@
+version: '3'
+services:
+    comic:
+        build:
+            context: ./
+            dockerfile: DockerFile
+        working_dir: /usr/comic
+        ports:
+            - '3000:3000'

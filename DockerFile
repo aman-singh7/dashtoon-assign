@@ -1,0 +1,14 @@
+FROM node:16
+
+WORKDIR /usr/comic
+
+COPY ./package.json ./package.json
+
+RUN npm config set legacy-peer-deps true
+RUN npm install 
+
+COPY . .
+
+RUN npm run build
+
+CMD ["npm", "start"]
