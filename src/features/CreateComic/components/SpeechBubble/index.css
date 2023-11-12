@@ -1,0 +1,81 @@
+@import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
+
+.speech-bubble{
+    display: flex;
+    flex-flow: column nowrap;
+    word-break: break-all;
+    overflow-wrap: break-word;    
+}
+
+.speech-bubble.react-draggable-dragging{
+    cursor: grabbing;
+}
+
+.speech-bubble:hover .speech-bubble-lock{
+    display: block !important;
+}
+
+.bubble {
+    position: absolute;
+    padding: 30px 40px;
+    border-radius: 10px;
+    border: 3px solid black;
+    background: white;
+    font-family: "Permanent Marker";
+    clear: both;
+    z-index: 50;
+    min-width: 45px;
+}
+
+.speech-bubble-lock{
+    padding-top: 0.5rem;
+    align-self: flex-end;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.speech-bubble-text{
+    margin: 0;
+    font-size: medium;
+    word-break: break-word;
+    cursor: auto;
+}
+
+[contenteditable][placeholder]:empty:before {
+    content: attr(placeholder);
+    position: absolute;
+    color: gray;
+    background-color: transparent;
+}
+
+.speech-bubble-text:focus{
+    outline: none;
+}
+
+.bubble:before {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    height: 50px;
+    width: 90px;
+}
+
+.bubble.left::before {
+    border-radius: 0 0 100%;
+    box-shadow:
+        -2px -2px 0 0 #000 inset,
+        -23px 0 0 0 #fff inset,
+        -25px -2px 0 0 #000 inset;
+    left: 0;
+}
+
+.bubble.right:before {
+    border-radius: 0 0 0 100%;
+    box-shadow:
+        2px -2px 0 0 #000 inset,
+        23px 0 0 0 #fff inset,
+        25px -2px 0 0 #000 inset;
+    right: 0;
+}

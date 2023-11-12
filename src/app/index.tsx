@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { fetchComicFromText } from "app/api/HuggingFace/comics";
 import { SettingFilled } from "@ant-design/icons";
 import CreateComic from "features/CreateComic";
 import "app/index.css";

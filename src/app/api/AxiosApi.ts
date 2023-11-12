@@ -27,7 +27,8 @@ type ApiRequest = {
   errorResolver: (error: any) => void;
 };
 
-const RATE_LIMIT = 2;
+// put it in multiples of 3 to divide the requests in 3 slots of 20s to avoid burst traffic
+const RATE_LIMIT = 6; // 6 req/min => 2 requests will be done at intervals of 20s
 
 class AxiosApi {
   axiosInstance: AxiosInstance;
@@ -46,17 +47,17 @@ class AxiosApi {
   }
 
   private processRequest = async (request: ApiRequest) => {
-    // process request again after 1 min if any present
+    // process request again after 20s if any present
     setTimeout(() => {
       const apiRequest: ApiRequest | undefined =
         this.pendingRequestQueue.deueue();
       if (apiRequest) {
-        this.processRequest(request);
+        this.processRequest(apiRequest);
       } else {
         // no request in the pendingQueue, so make room for upcoming requests
         this.outstandingRequestCounter--;
       }
-    }, 1000);
+    }, 20000);
 
     let response: AxiosResponse;
     try {
@@ -94,11 +95,11 @@ class AxiosApi {
           successResolver: resolve,
           errorResolver: reject,
         };
-        if (this.outstandingRequestCounter < RATE_LIMIT) {
+        if (this.outstandingRequestCounter < RATE_LIMIT / 3) {
           this.outstandingRequestCounter++;
           this.processRequest(apiRequest);
         } else {
-          // these requests will be initiated by the processes which are already initiated
+          // these requests will be initiated by the requests which are already initiated
           this.pendingRequestQueue.enqueue(apiRequest);
         }
       }

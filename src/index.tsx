@@ -4,16 +4,19 @@ import "index.css";
 import App from "app";
 import { App as AntApp } from "antd";
 import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-      
+
 root.render(
   <React.StrictMode>
-    <AntApp>
-      <App />
-    </AntApp>
+    <BrowserRouter>
+      <AntApp>
+        <App />
+      </AntApp>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
 import "features/CreateComic/index.css";
 import ImageBox from "features/CreateComic/components/ImageBox";
+import SpeechBubble from "./components/SpeechBubble";
 
 export interface CreateCompicProps {
   className: string;
@@ -13,6 +14,8 @@ const CreateComic: React.FC<CreateCompicProps> = (props: CreateCompicProps) => {
     <div className={`home-content-container ${className}`}>
       <div className="home-drawer"></div>
       <div className="home-content">
+        <SpeechBubble direction="left" />
+        <SpeechBubble direction="right" />
         {colCounts.map((count: number, rowIndex: number) => (
           <Row gutter={[16, 32]} className="home-content-row">
             {Array.from({ length: count }).map((_, colIndex: number) => (

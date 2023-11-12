@@ -5,6 +5,7 @@
 }
 
 .home-content {
+    position: relative;
     overflow: auto;
     padding: 1rem 1.5rem;
     flex: 1;
